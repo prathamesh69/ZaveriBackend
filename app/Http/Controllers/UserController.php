@@ -94,7 +94,7 @@ class UserController extends Controller
         return $user;
     }
     
-    public function create_retailer(Request $req)
+    public function create_whole(Request $req)
     {
         $this->validate($req, [
             'name' => ['required', 'string', 'max:255'],
@@ -102,7 +102,7 @@ class UserController extends Controller
             'username' => ['required', 'string', 'size:10', 'unique:users'],
             'role' => ['required', 'string', 'in:admin,wholesaler,retailer'],
             'password' => ['required', 'string', 'min:6'],
-            'retailer_firm_id' => ['nullable', 'exists:retailer_firms,id'],
+            'wholesaler_firm_id' => ['nullable', 'exists:wholesaler_firm,id'],
             'image' => 'nullable|image',
             'pincode' => 'nullable|string|size:6',
             'retailer_firm_name' => 'nullable|string|max:255',
@@ -118,7 +118,7 @@ class UserController extends Controller
         }
         $user->save();
 
-        if ($user->role == 'retailer') dispatch(new NWNotificationJob($user));
+        if ($user->role == 'wholesaler') dispatch(new NWNotificationJob($user));
 
         return $user;
     }    
