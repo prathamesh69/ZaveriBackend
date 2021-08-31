@@ -93,7 +93,36 @@ class UserController extends Controller
 
         return $user;
     }
+    
+    public function create_retailer(Request $req)
+    {
+        $this->validate($req, [
+            'name' => ['required', 'string', 'max:255'],
+            'mobile' => ['required', 'string', 'max:10'],
+            'username' => ['required', 'string', 'size:10', 'unique:users'],
+            'role' => ['required', 'string', 'in:admin,wholesaler,retailer'],
+            'password' => ['required', 'string', 'min:6'],
+            'retailer_firm_id' => ['nullable', 'exists:retailer_firms,id'],
+            'image' => 'nullable|image',
+            'pincode' => 'nullable|string|size:6',
+            'retailer_firm_name' => 'nullable|string|max:255',
+            'city_id' => 'nullable|exists:cities,id',
+        ]);
 
+        // create user
+        $user = new User;
+        $user->fill($req->all());
+        $user->password = Hash::make($req->input('password'));
+        if ($req->hasFile('image')) {
+            $user->image = ImageHelper::saveImage($req->file('image'), ImageHelper::$TYPE_USER);
+        }
+        $user->save();
+
+        if ($user->role == 'retailer') dispatch(new NWNotificationJob($user));
+
+        return $user;
+    }    
+    
     /**
      * Show user.
      * GET /api/users/{id}
