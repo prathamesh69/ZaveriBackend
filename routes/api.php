@@ -18,7 +18,7 @@ $router->get('/', function () use ($router) {
 $router->group(['prefix' => 'users'], function () use ($router) {
     $router->get('', ['middleware' => 'role:admin', 'uses' => 'UserController@index']);
     $router->post('', ['middleware' => 'role:admin', 'uses' => 'UserController@create']);
-
+    $router->post('', ['middleware' => 'role:admin', 'uses'=> 'UserController@create_retailer']);
     $router->post('signup', ['uses' => 'UserController@signup']);
     $router->post('login', ['uses' => 'UserController@login']);
     $router->post('reset-password', ['uses' => 'UserController@resetPassword']);
